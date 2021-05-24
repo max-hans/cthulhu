@@ -7,16 +7,7 @@ import Home from "./routes/Home";
 import Generator from "./routes/Generator";
 import About from "./routes/About";
 
-import {
-  ChakraProvider,
-  Box,
-  Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
-  theme,
-} from "@chakra-ui/react";
+import { ChakraProvider, Grid, theme } from "@chakra-ui/react";
 
 const ta = `
 header

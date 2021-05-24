@@ -23,18 +23,16 @@ export interface GenericMotor extends Record<string, any> {
   timer: number;
   useTimer: boolean;
   useEndstops: boolean;
+  speed: number;
+  pin1: Pin;
+  pin2: Pin;
 }
 
 export interface DCMotor extends GenericMotor {
   motorType: "DC";
-  pin1: Pin;
-  pin2: Pin;
   pin3: Pin;
 }
 
 export interface Stepper extends GenericMotor {
   motorType: "STEPPER";
-  pin1: Pin;
-  pin2: Pin;
-  speed: number;
 }

@@ -49,11 +49,12 @@ const Settings = ({
   return (
     <VStack minW={200} align="baseline" w="100%">
       <HStack w="100%">
-        <Heading size="sm">{`${index}: ${settings.motorType}`} </Heading>
+        <Heading size="sm">{`${index + 1}: ${settings.motorType}`} </Heading>
         <Spacer />
         <IconButton
           aria-label="Search database"
           colorScheme="orange"
+          variant="ghost"
           icon={<DeleteIcon />}
           onClick={onRemove}
         />

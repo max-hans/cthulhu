@@ -104,12 +104,10 @@ if (digitalRead(${motor.endstops[motor.invertEndstops ? 1 : 0]}) == LOW) {
       );
     }
   });
-  imports.push("\n");
-  global.push("\n");
+  imports.push();
+  global.push();
   setup.push("}\n");
   loop.push("}\n");
-
-  console.log(global);
 
   return [imports, global, setup, loop]
     .flat(2)
