@@ -5,9 +5,11 @@ import {
   Spacer,
   IconButton,
   Checkbox,
+  Button,
 } from "@chakra-ui/react";
 
-import { DeleteIcon } from "@chakra-ui/icons";
+import { DeleteIcon } from "../../res/Icons";
+
 import * as React from "react";
 import { DCMotor, Stepper } from "./code-generator/types";
 
@@ -49,15 +51,16 @@ const Settings = ({
   return (
     <VStack minW={200} align="baseline" w="100%">
       <HStack w="100%">
-        <Heading size="sm">{`${index + 1}: ${settings.motorType}`} </Heading>
+        <Heading size="sm">{`[${index + 1}] ${settings.motorType}`} </Heading>
         <Spacer />
-        <IconButton
+        <Button
           aria-label="Search database"
-          colorScheme="orange"
+          colorScheme="black"
           variant="ghost"
-          icon={<DeleteIcon />}
           onClick={onRemove}
-        />
+        >
+          delete
+        </Button>
       </HStack>
 
       <InputField

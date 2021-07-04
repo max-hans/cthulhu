@@ -6,6 +6,10 @@ import {
   Text,
   Button,
   Spacer,
+  Divider,
+  Center,
+  Alert,
+  AlertIcon,
 } from "@chakra-ui/react";
 import * as React from "react";
 import { useEffect, useState } from "react";
@@ -16,6 +20,7 @@ import { DCMotor, Pin, Stepper } from "./code-generator/types";
 import MotorSettings from "./MotorSettings";
 
 import generate from "./code-generator/main";
+import { RobotIcon } from "../../res/Icons";
 
 type Settings = Array<DCMotor | Stepper>;
 
@@ -77,8 +82,6 @@ const checkForOverlap = (settings: Settings): Array<number> => {
       return acc;
     }
   }, []);
-
-  console.log(overlaps);
   return overlaps;
 };
 
@@ -144,24 +147,37 @@ const Generator = () => {
   };
 
   return (
-    <HStack w="100%" h="100%" area="content" align="baseline">
-      <VStack minW={400} align="baseline" p={4} spacing="20px">
+    <HStack area="content" align="baseline" overflow="hidden">
+      <VStack
+        minW={400}
+        align="baseline"
+        p={4}
+        spacing={8}
+        overflow="hidden"
+        maxH="100%"
+      >
         <HStack w="100%">
-          <Heading size="md">generator</Heading>
+          <Heading size="sm">configuration</Heading>
           <Spacer />
 
           <Button
             variant="link"
-            colorScheme="red"
+            colorScheme="black"
             onClick={() => setSettings([])}
           >
             clear
           </Button>
+
+          <Button variant="link" colorScheme="black" onClick={handleSave}>
+            save
+          </Button>
+          <Button variant="link" onClick={handleLoad}>
+            load
+          </Button>
         </HStack>
-        <Box bg="yellow.200" w="100%" minH={2}></Box>
 
         <HStack w="100%">
-          <Text>add motor:</Text>
+          <Text>add motor</Text>
           <Spacer />
           <Button
             variant="link"
@@ -169,7 +185,7 @@ const Generator = () => {
               handleAdd("DC");
             }}
           >
-            dc
+            +DC
           </Button>
           <Button
             variant="link"
@@ -177,61 +193,85 @@ const Generator = () => {
               handleAdd("STEPPER");
             }}
           >
-            stepper
+            +stepper
           </Button>
         </HStack>
         {overlaps.length > 0 ? (
-          <Box bg="red.400" w="100%" p={4}>
-            <Text>overlapping pins: {overlaps.join(", ")}</Text>
-          </Box>
+          <Alert status="error">
+            <AlertIcon />
+            overlapping pins: {overlaps.join(", ")}
+          </Alert>
         ) : (
-          <Text color="green">no conflicts</Text>
+          <Alert status="success">
+            <AlertIcon />
+            no conflicts
+          </Alert>
         )}
-
-        <VStack minW={200} align="baseline" p={0} spacing={4} w="100%">
-          {settings.map((elem, i) => (
-            <MotorSettings
-              settings={elem}
-              index={i}
-              onSettingsChange={(data) => handleChange(data, i)}
-              onRemove={() => handleRemove(i)}
-              key={`motor-${i}`}
-            />
-          ))}
-        </VStack>
+        <Box flex="1" overflow="auto" minW={200} w="100%">
+          <VStack
+            align="baseline"
+            p={2}
+            spacing={4}
+            w="100%"
+            divider={<Divider orientation="horizontal" />}
+          >
+            {settings.map((elem, i) => (
+              <MotorSettings
+                settings={elem}
+                index={i}
+                onSettingsChange={(data) => handleChange(data, i)}
+                onRemove={() => handleRemove(i)}
+                key={`motor-${i}`}
+              />
+            ))}
+          </VStack>
+        </Box>
       </VStack>
 
-      <VStack flex="1" p={4} align="baseline" h="100%" spacing="20px">
+      <VStack
+        p={4}
+        align="baseline"
+        maxH="100%"
+        h="100%"
+        spacing={8}
+        flex="1"
+        overflow="hidden"
+      >
         <HStack w="100%">
-          <Heading size="md">preview</Heading>
+          <Heading size="sm">preview</Heading>
           <Spacer />
 
-          <Button
-            variant="link"
-            colorScheme="blue"
-            onClick={() => clipboard.copy(code)}
-          >
+          <Button variant="link" onClick={() => clipboard.copy(code)}>
             copy
           </Button>
-          <Button variant="link" colorScheme="green" onClick={handleSave}>
-            save
-          </Button>
-          <Button variant="link" colorScheme="yellow" onClick={handleLoad}>
-            load
-          </Button>
         </HStack>
-        <Box bg="blue.200" w="100%" minH={2}></Box>
-        <Box minH={10} w="100%">
-          <Text
-            border="1px"
-            borderColor="gray.200"
-            p={2}
-            as={SyntaxHighlighter}
-            language="arduino"
-          >
-            {code}
-          </Text>
-        </Box>
+
+        {settings.length ? (
+          <Box w="100%" flex="1" overflow="auto" p={0}>
+            <Text
+              m={0}
+              as={SyntaxHighlighter}
+              language="arduino"
+              h="100%"
+              showLineNumbers={true}
+              customStyle={{
+                margin: "0px",
+                backgroundColor: "white",
+              }}
+              border="2px"
+              borderColor="main.gray"
+            >
+              {code}
+            </Text>
+          </Box>
+        ) : (
+          <Center width="100%" flex="1">
+            <VStack spacing={8}>
+              <RobotIcon w={20} h={20} fill="main.gray" />
+              <Text color="main.gray">add motors to generate code!</Text>
+            </VStack>
+          </Center>
+        )}
       </VStack>
     </HStack>
   );
