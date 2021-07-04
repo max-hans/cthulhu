@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 import {
   Box,
   Heading,
@@ -10,17 +12,17 @@ import {
   Center,
   Alert,
   AlertIcon,
-} from "@chakra-ui/react";
-import * as React from "react";
-import { useEffect, useState } from "react";
-import { useClipboard } from "use-clipboard-copy";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+} from '@chakra-ui/react';
 
-import { DCMotor, Pin, Stepper } from "./code-generator/types";
-import MotorSettings from "./MotorSettings";
+import { useEffect, useState } from 'react';
+import { useClipboard } from 'use-clipboard-copy';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
-import generate from "./code-generator/main";
-import { RobotIcon } from "../../res/Icons";
+import { DCMotor, Pin, Stepper } from './code-generator/types';
+import MotorSettings from './MotorSettings';
+
+import generate from './code-generator/main';
+import { RobotIcon } from '../../res/Icons';
 
 type Settings = Array<DCMotor | Stepper>;
 
@@ -31,12 +33,12 @@ const motor1Template = {
   useEndstops: false,
   useTimer: false,
   timer: 1000,
-  motorType: "STEPPER",
+  motorType: 'STEPPER',
   speed: 500,
 } as Stepper;
 
 const motor2Template = {
-  motorType: "DC",
+  motorType: 'DC',
   pin1: 5,
   pin2: 6,
   pin3: 7,
@@ -46,22 +48,22 @@ const motor2Template = {
   timer: 1000,
 } as DCMotor;
 
-const getPins = (motorDef: Stepper | DCMotor) => {
+const getPins = (motorDef: Stepper | DCMotor):Array<Pin> => {
   const keys = Object.keys(motorDef);
 
   const keyBlacklist = [
-    "motorType",
-    "useEndstops",
-    "useTimer",
-    "timer",
-    "speed",
-    "endstops",
+    'motorType',
+    'useEndstops',
+    'useTimer',
+    'timer',
+    'speed',
+    'endstops',
   ];
   let pins = keys
     .filter((key) => !keyBlacklist.includes(key))
-    .map((key) => motorDef[key]);
+    .map((key) => motorDef[key] as Pin);
   if (motorDef.useEndstops) {
-    pins.push(motorDef.endstops);
+    motorDef.endstops.forEach((elem) => pins.push(elem));
     pins = pins.flat(1);
   }
   return pins;
@@ -70,26 +72,27 @@ const getPins = (motorDef: Stepper | DCMotor) => {
 const checkForOverlap = (settings: Settings): Array<number> => {
   const allPins = settings.map((motor) => getPins(motor)).flat(1);
 
-  let overlaps: Array<Pin> = [];
+  const overlaps: Array<Pin> = [];
 
-  allPins.reduce((acc, currentPin) => {
+  allPins.reduce((acc:Array<number>, currentPin: number) => {
     if (!acc.includes(currentPin)) {
       return [...acc, currentPin];
-    } else {
-      if (!overlaps.includes(currentPin)) {
-        overlaps.push(currentPin);
-      }
-      return acc;
     }
+    if (!overlaps.includes(currentPin)) {
+      overlaps.push(currentPin);
+    }
+    return acc;
   }, []);
   return overlaps;
 };
 
-const Generator = () => {
+const Generator = ():JSX.Element => {
   const [settings, setSettings] = useState<Settings>([
     motor1Template,
     motor2Template,
   ]);
+
+  const [code, setCode] = useState('');
 
   const [overlaps, setOverlaps] = useState<Array<Pin>>([]);
 
@@ -97,8 +100,8 @@ const Generator = () => {
     const generated = generate(settings);
     setCode(generated);
 
-    const overlaps = checkForOverlap(settings);
-    setOverlaps(overlaps);
+    const newOverlaps = checkForOverlap(settings);
+    setOverlaps(newOverlaps);
   }, [settings]);
 
   const handleChange = (data: DCMotor | Stepper, index: number) => {
@@ -117,22 +120,20 @@ const Generator = () => {
     setSettings(newSettings);
   };
 
-  const handleAdd = (type: "DC" | "STEPPER") => {
-    const newMotor = type === "STEPPER" ? motor1Template : motor2Template;
+  const handleAdd = (type: 'DC' | 'STEPPER') => {
+    const newMotor = type === 'STEPPER' ? motor1Template : motor2Template;
     const newSettings = [...settings, newMotor];
     setSettings(newSettings);
   };
 
-  const [code, setCode] = useState("");
-
   const clipboard = useClipboard();
 
   const handleSave = () => {
-    localStorage.setItem("settings", JSON.stringify(settings));
+    localStorage.setItem('settings', JSON.stringify(settings));
   };
 
   const handleLoad = () => {
-    const itemString = localStorage.getItem("settings");
+    const itemString = localStorage.getItem('settings');
     if (itemString) {
       try {
         const newSettings = JSON.parse(itemString);
@@ -140,7 +141,6 @@ const Generator = () => {
           setSettings(newSettings);
         }
       } catch (e) {
-        console.log(e);
         setSettings([]);
       }
     }
@@ -182,7 +182,7 @@ const Generator = () => {
           <Button
             variant="link"
             onClick={() => {
-              handleAdd("DC");
+              handleAdd('DC');
             }}
           >
             +DC
@@ -190,7 +190,7 @@ const Generator = () => {
           <Button
             variant="link"
             onClick={() => {
-              handleAdd("STEPPER");
+              handleAdd('STEPPER');
             }}
           >
             +stepper
@@ -199,7 +199,9 @@ const Generator = () => {
         {overlaps.length > 0 ? (
           <Alert status="error">
             <AlertIcon />
-            overlapping pins: {overlaps.join(", ")}
+            overlapping pins:
+            {' '}
+            {overlaps.join(', ')}
           </Alert>
         ) : (
           <Alert status="success">
@@ -221,6 +223,7 @@ const Generator = () => {
                 index={i}
                 onSettingsChange={(data) => handleChange(data, i)}
                 onRemove={() => handleRemove(i)}
+                // eslint-disable-next-line react/no-array-index-key
                 key={`motor-${i}`}
               />
             ))}
@@ -253,10 +256,10 @@ const Generator = () => {
               as={SyntaxHighlighter}
               language="arduino"
               h="100%"
-              showLineNumbers={true}
+              showLineNumbers
               customStyle={{
-                margin: "0px",
-                backgroundColor: "white",
+                margin: '0px',
+                backgroundColor: 'white',
               }}
               border="2px"
               borderColor="main.gray"

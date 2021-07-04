@@ -7,21 +7,24 @@ import {
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInputStepper,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 
-import * as React from "react";
+import * as React from 'react';
 
 interface InputFieldProps {
   value: number;
   update: (data: number | null) => void;
   title: string;
+  // eslint-disable-next-line react/require-default-props
   steps?: number;
 }
 
-const InputField = ({ value, update, title, steps }: InputFieldProps) => {
+const InputField = ({
+  value, update, title, steps = 1,
+}: InputFieldProps):JSX.Element => {
   const updateVal = (e: string) => {
     if (e.length) {
-      update(parseInt(e));
+      update(parseInt(e, 10));
     }
   };
   return (

@@ -1,9 +1,11 @@
-import { Center, Heading, Image, Link, VStack } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
-import * as React from "react";
-import logo from "./logo.svg";
+import * as React from 'react';
+import {
+  Center, Heading, Image, Link, VStack,
+} from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom';
+import logo from './logo.svg';
 
-const Home = () => (
+const Home = ():JSX.Element => (
   <Center area="content">
     <VStack p={8} borderWidth="1px" borderRadius="lg" justifyContent="center">
       <Heading size="md">creative hacking code generator</Heading>

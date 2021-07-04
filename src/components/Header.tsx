@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Heading,
   Text,
@@ -15,15 +15,12 @@ import {
   ModalHeader,
   ModalOverlay,
   VStack,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 
-import { CityIcon } from "../res/Icons";
+import { CityIcon } from '../res/Icons';
 
-interface HeaderProps {}
-
-const Header = (props: HeaderProps) => {
+const Header = ():JSX.Element => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
   return (
     <>
       <HStack
@@ -32,7 +29,6 @@ const Header = (props: HeaderProps) => {
         bg="main.bg"
         color="white"
         spacing={8}
-        {...props}
       >
         <Heading as="h1" size="md">
           code generator
@@ -62,8 +58,8 @@ const Header = (props: HeaderProps) => {
               </Text>
 
               <Text>
-                The generated code is not streamlined for performance or "good
-                code" but as verbose as possible for beginners who start off and
+                The generated code is not streamlined for performance or `&quot;`good
+                code`&quot;` but as verbose as possible for beginners who start off and
                 learn about the mechanics of code.
               </Text>
 
