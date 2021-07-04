@@ -1,6 +1,6 @@
-import { DCMotor, InstructionLine, Stepper } from "./types";
+import { DCMotor, InstructionLine, Stepper } from './types';
 
-const blockSplitter = "//-------------------------------- \n\n";
+const blockSplitter = '//-------------------------------- \n\n';
 
 const generate = (motors: Array<Stepper | DCMotor>): string => {
   const imports: Array<InstructionLine | Array<InstructionLine>> = [];
@@ -14,8 +14,8 @@ const generate = (motors: Array<Stepper | DCMotor>): string => {
     `${blockSplitter}void loop(){`,
   ];
 
-  if (motors.some((motor) => motor.motorType === "STEPPER")) {
-    imports.push("#include <AccelStepper.h>");
+  if (motors.some((motor) => motor.motorType === 'STEPPER')) {
+    imports.push('#include <AccelStepper.h>');
   }
 
   motors.forEach((motor, index) => {
@@ -26,9 +26,9 @@ const generate = (motors: Array<Stepper | DCMotor>): string => {
     // INITIALIZATION
     global.push(`boolean ${directionVarName} = true;`);
 
-    if (motor.motorType === "STEPPER") {
+    if (motor.motorType === 'STEPPER') {
       global.push(
-        `AccelStepper ${motorName}(1, ${motor.pin1}, ${motor.pin2});`
+        `AccelStepper ${motorName}(1, ${motor.pin1}, ${motor.pin2});`,
       );
 
       global.push(
@@ -38,7 +38,7 @@ const generate = (motors: Array<Stepper | DCMotor>): string => {
     ${motorName}.setSpeed(-${motor.speed});
   }
     ${directionVarName} = newDirection;
-}`
+}`,
       );
 
       setup.push(`${motorName}.setMaxSpeed(${motor.speed});`);
@@ -46,7 +46,7 @@ const generate = (motors: Array<Stepper | DCMotor>): string => {
       setup.push(
         `pinMode(${motor.pin1}, OUTPUT);
 pinMode(${motor.pin2}, OUTPUT);
-pinMode(${motor.pin3}, OUTPUT);`
+pinMode(${motor.pin3}, OUTPUT);`,
       );
 
       global.push(
@@ -60,7 +60,7 @@ pinMode(${motor.pin3}, OUTPUT);`
     digitalWrite(${motor.pin2}, HIGH);
   }
   ${directionVarName} = newDirection;
-}`
+}`,
       );
     }
 
@@ -72,14 +72,14 @@ pinMode(${motor.pin3}, OUTPUT);`
 
       global.push(
         `unsigned long ${timerName} = 0;
-unsigned int ${deltaName} = ${motor.timer};`
+unsigned int ${deltaName} = ${motor.timer};`,
       );
 
       loop.push(
         `if(${timerName} > millis()){
   ${directionFuncName}(!${directionVarName});
   ${timerName} = ${timerName} + ${deltaName};
-}`
+}`,
       );
     }
 
@@ -88,7 +88,7 @@ unsigned int ${deltaName} = ${motor.timer};`
     if (motor.useEndstops) {
       setup.push(
         `pinMode(${motor.endstops[0]}, INPUT_PULLUP);
-pinMode(${motor.endstops[1]}, INPUT_PULLUP);`
+pinMode(${motor.endstops[1]}, INPUT_PULLUP);`,
       );
 
       loop.push(
@@ -100,19 +100,19 @@ pinMode(${motor.endstops[1]}, INPUT_PULLUP);`
 
 if (digitalRead(${motor.endstops[motor.invertEndstops ? 1 : 0]}) == LOW) {
   motor1SetDirection(false);
-}`
+}`,
       );
     }
   });
   imports.push();
   global.push();
-  setup.push("}\n");
-  loop.push("}\n");
+  setup.push('}\n');
+  loop.push('}\n');
 
   return [imports, global, setup, loop]
     .flat(2)
-    .map((elem) => elem.trim() + "\n")
-    .join("\n");
+    .map((elem) => `${elem.trim()}\n`)
+    .join('\n');
 };
 
 export default generate;
