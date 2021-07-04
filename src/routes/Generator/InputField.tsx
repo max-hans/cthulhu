@@ -30,7 +30,7 @@ const InputField = ({ value, update, title, steps }: InputFieldProps) => {
       <Spacer />
 
       <NumberInput
-        size="md"
+        size="sm"
         w={40}
         min={0}
         value={value}

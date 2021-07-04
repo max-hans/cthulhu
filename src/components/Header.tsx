@@ -1,9 +1,6 @@
 import React from "react";
 import {
-  Box,
-  Stack,
   Heading,
-  Flex,
   Text,
   Button,
   useDisclosure,
@@ -19,7 +16,7 @@ import {
   ModalOverlay,
   VStack,
 } from "@chakra-ui/react";
-import { HamburgerIcon } from "@chakra-ui/icons";
+
 import { CityIcon } from "../res/Icons";
 
 interface HeaderProps {}
