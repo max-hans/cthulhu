@@ -1,3 +1,9 @@
+![cover](github/cover.png)
+
+<p align="center">
+<a href="https://mystifying-franklin-a21537.netlify.app/">---> demo <---</a>
+</p>
+
 # about
 
 This light tool is meant to create code-snippets for arduinos
